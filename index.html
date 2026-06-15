@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🛸 Nə Danışırsınız Siz?!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Share+Tech+Mono&display=swap');
+  :root{--bg:#06060f;--bg2:#0d0d1e;--bg3:#12122a;--green:#39ff14;--purple:#8b2fc9;--purple2:#b44ef0;--red:#ff3355;--cyan:#00e5ff;--white:#e8e8ff;--muted:#4a4a7a;--gold:#ffd700;--ta:#00e5ff;--tb:#ff6b35}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--white);font-family:'Space Grotesk',sans-serif;min-height:100vh;overflow-x:hidden}
+  body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);pointer-events:none;z-index:9999}
+  .app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+  header{text-align:center;margin-bottom:28px;padding-top:12px}
+  .logo{font-size:clamp(1.5rem,4vw,2.6rem);font-weight:700;background:linear-gradient(135deg,var(--green) 0%,var(--cyan) 40%,var(--purple2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .logo-sub{font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:var(--muted);letter-spacing:0.25em;margin-top:4px}
+  .panel{background:var(--bg2);border:1px solid rgba(139,47,201,0.3);border-radius:12px;padding:24px;width:100%;max-width:600px;box-shadow:0 0 40px rgba(139,47,201,0.1)}
+  .panel-title{font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--purple2);letter-spacing:0.3em;text-transform:uppercase;margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid rgba(139,47,201,0.2)}
+  input[type="text"],select{width:100%;background:var(--bg3);border:1px solid rgba(139,47,201,0.4);border-radius:8px;padding:11px 15px;color:var(--white);font-family:'Space Grotesk',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.2s;margin-bottom:10px;-webkit-appearance:none}
+  input[type="text"]:focus,select:focus{border-color:var(--purple2);box-shadow:0 0 0 3px rgba(139,47,201,0.15)}
+  input::placeholder{color:var(--muted)}
+  select option{background:var(--bg2)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 22px;border-radius:8px;font-family:'Space Grotesk',sans-serif;font-size:0.92rem;font-weight:600;cursor:pointer;transition:all 0.15s;border:none;width:100%;margin-bottom:9px}
+  .btn-primary{background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;box-shadow:0 4px 20px rgba(139,47,201,0.4)}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 28px rgba(139,47,201,0.5)}
+  .btn-secondary{background:transparent;color:var(--cyan);border:1px solid rgba(0,229,255,0.4)}
+  .btn-secondary:hover{background:rgba(0,229,255,0.06)}
+  .btn-green{background:linear-gradient(135deg,#1a7a00,var(--green));color:#000;font-weight:700}
+  .btn-skip{background:rgba(74,74,122,0.3);color:var(--muted);border:1px solid rgba(74,74,122,0.5);margin-bottom:0}
+  .btn-skip:hover{background:rgba(74,74,122,0.5);color:var(--white)}
+  .btn:disabled{opacity:0.4;cursor:not-allowed;transform:none!important}
+  .btn-sm{padding:7px 14px;font-size:0.82rem;width:auto;margin-bottom:0}
+  .btn-danger{background:rgba(255,51,85,0.12);color:var(--red);border:1px solid rgba(255,51,85,0.3)}
+  .divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--muted);font-size:0.75rem;font-family:'Share Tech Mono',monospace}
+  .divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(139,47,201,0.2)}
+  .otaq-kodu-goster{background:var(--bg3);border:1px solid rgba(0,229,255,0.3);border-radius:8px;padding:14px;text-align:center;margin-bottom:18px}
+  .otaq-kodu-label{font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:var(--muted);letter-spacing:0.3em;margin-bottom:5px}
+  .otaq-kodu-val{font-family:'Share Tech Mono',monospace;font-size:2.2rem;font-weight:700;color:var(--cyan);letter-spacing:0.2em;text-shadow:0 0 20px rgba(0,229,255,0.4)}
+  .otaqlar-list{display:flex;flex-direction:column;gap:7px;max-height:180px;overflow-y:auto;margin-bottom:4px}
+  .otaq-row{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid rgba(139,47,201,0.2);border-radius:8px;padding:10px 13px;cursor:pointer;transition:all 0.2s}
+  .otaq-row:hover{border-color:var(--cyan)}
+  .otaq-row-kod{font-family:'Share Tech Mono',monospace;font-size:1rem;color:var(--cyan);font-weight:700;flex:1;letter-spacing:0.15em}
+  .otaq-row-meta{font-size:0.72rem;color:var(--muted);text-align:right}
+  .refresh-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;font-family:'Share Tech Mono',monospace;padding:3px 7px;border-radius:4px}
+  .refresh-btn:hover{color:var(--cyan)}
+  /* Gözləmə */
+  .oyuncular-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+  .komanda-blok{background:var(--bg3);border-radius:8px;padding:12px}
+  .komanda-baslik{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase;margin-bottom:9px;padding-bottom:6px;border-bottom:1px solid}
+  .komanda-baslik.a{color:var(--ta);border-color:rgba(0,229,255,0.2)}.komanda-baslik.b{color:var(--tb);border-color:rgba(255,107,53,0.2)}
+  .oyuncu-row{display:flex;align-items:center;gap:7px;padding:4px 0;font-size:0.82rem}
+  .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+  .dot.hazir{background:var(--green);box-shadow:0 0 6px var(--green)}.dot.bekle{background:var(--muted)}
+  .sen-badge{font-size:0.6rem;background:rgba(139,47,201,0.3);color:var(--purple2);padding:1px 5px;border-radius:4px;font-family:'Share Tech Mono',monospace}
+  .sahib-badge{font-size:0.6rem;background:rgba(255,215,0,0.2);color:var(--gold);padding:1px 5px;border-radius:4px;font-family:'Share Tech Mono',monospace;margin-left:3px}
+  /* Oyuncu köç düymələri */
+  .koc-btn{background:none;border:1px solid rgba(139,47,201,0.4);border-radius:5px;color:var(--purple2);font-size:0.65rem;padding:1px 6px;cursor:pointer;margin-left:4px;font-family:'Share Tech Mono',monospace;transition:all 0.15s}
+  .koc-btn:hover{background:rgba(139,47,201,0.2);color:var(--white)}
+  .ayar-bolme{background:var(--bg3);border-radius:8px;padding:13px;margin-bottom:14px}
+  .ayar-baslig{font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:var(--purple2);letter-spacing:0.25em;text-transform:uppercase;margin-bottom:9px}
+  .diff-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:4px}
+  .diff-btn{background:var(--bg);border:2px solid rgba(139,47,201,0.3);border-radius:9px;padding:10px;cursor:pointer;text-align:center;color:var(--white);font-family:'Space Grotesk',sans-serif;transition:all 0.2s}
+  .diff-btn:hover{border-color:rgba(139,47,201,0.6)}
+  .diff-btn.easy.sel{border-color:#39ff14;background:rgba(57,255,20,0.1)}
+  .diff-btn.medium.sel{border-color:#ffd700;background:rgba(255,215,0,0.08)}
+  .diff-btn.hard.sel{border-color:#ff6b35;background:rgba(255,107,53,0.08)}
+  .diff-btn.nightmare.sel{border-color:#ff3355;background:rgba(255,51,85,0.08)}
+  .diff-emoji{font-size:1.3rem;margin-bottom:3px}.diff-label{font-weight:700;font-size:0.85rem;margin-bottom:1px}.diff-info{font-size:0.67rem;color:var(--muted);font-family:'Share Tech Mono',monospace}
+  .ayar-row{display:flex;align-items:center;gap:9px;margin-top:9px}
+  .ayar-row label{font-size:0.82rem;color:var(--muted);flex:1}
+  .ayar-row select,.ayar-row input[type="number"]{margin-bottom:0;flex:2;padding:8px 11px;font-size:0.85rem}
+  input[type="number"]{background:var(--bg);border:1px solid rgba(139,47,201,0.4);border-radius:8px;color:var(--white);outline:none}
+  /* Mod seçim */
+  .mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+  .mod-btn{background:var(--bg);border:2px solid rgba(139,47,201,0.3);border-radius:9px;padding:10px 8px;cursor:pointer;text-align:center;color:var(--white);font-family:'Space Grotesk',sans-serif;transition:all 0.2s;font-size:0.82rem}
+  .mod-btn:hover{border-color:rgba(139,47,201,0.6)}
+  .mod-btn.sel{border-color:var(--cyan);background:rgba(0,229,255,0.08);color:var(--cyan)}
+  .mod-emoji{font-size:1.3rem;margin-bottom:3px}
+  .mod-label{font-weight:700;font-size:0.85rem}
+  .mod-info{font-size:0.67rem;color:var(--muted);font-family:'Share Tech Mono',monospace;margin-top:2px}
+  .gozleme-mesaj{text-align:center;padding:13px;color:var(--muted);font-size:0.88rem}
+  .ldot{display:inline-block;animation:blink 1s infinite}.ldot:nth-child(2){animation-delay:0.2s}.ldot:nth-child(3){animation-delay:0.4s}
+  @keyframes blink{0%,80%,100%{opacity:0}40%{opacity:1}}
+  /* Oyun */
+  .oyun-ekrani{width:100%;max-width:720px}
+  .xal-paneli{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;margin-bottom:16px;align-items:center}
+  .xal-k{background:var(--bg2);border-radius:10px;padding:12px;text-align:center;border:1px solid;transition:all 0.3s}
+  .xal-k.a{border-color:rgba(0,229,255,0.3)}.xal-k.a.aktif{border-color:var(--ta);box-shadow:0 0 18px rgba(0,229,255,0.2)}
+  .xal-k.b{border-color:rgba(255,107,53,0.3)}.xal-k.b.aktif{border-color:var(--tb);box-shadow:0 0 18px rgba(255,107,53,0.2)}
+  .xal-k.umumi{border-color:rgba(255,215,0,0.3)}.xal-k.umumi.aktif{border-color:var(--gold);box-shadow:0 0 18px rgba(255,215,0,0.2)}
+  .xal-adi{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:3px}
+  .xal-adi.a{color:var(--ta)}.xal-adi.b{color:var(--tb)}.xal-adi.umumi{color:var(--gold)}
+  .xal-n{font-size:2rem;font-weight:700;line-height:1}
+  .xal-n.a{color:var(--ta)}.xal-n.b{color:var(--tb)}.xal-n.umumi{color:var(--gold)}
+  .tur-c{text-align:center}
+  .tur-label{font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.2em;text-transform:uppercase}
+  .tur-val{font-size:1.1rem;font-weight:600}
+  .vaxt-c{position:relative;width:76px;height:76px;margin:0 auto 14px}
+  .vaxt-c svg{transform:rotate(-90deg);width:76px;height:76px}
+  .bg-c{fill:none;stroke:rgba(139,47,201,0.2);stroke-width:5}
+  .prog-c{fill:none;stroke:var(--green);stroke-width:5;stroke-linecap:round;stroke-dasharray:220;stroke-dashoffset:0;transition:stroke-dashoffset 1s linear,stroke 0.3s}
+  .vaxt-t{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;font-size:1.2rem;font-weight:700}
+  .rol-tag{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:20px;font-family:'Share Tech Mono',monospace;font-size:0.68rem;letter-spacing:0.13em;text-transform:uppercase;margin-bottom:12px}
+  .rol-tag.alien{background:rgba(57,255,20,0.1);border:1px solid rgba(57,255,20,0.4);color:var(--green)}
+  .rol-tag.insan{background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.4);color:var(--cyan)}
+  .rol-tag.izci{background:rgba(74,74,122,0.2);border:1px solid rgba(74,74,122,0.4);color:var(--muted)}
+  .hedef-kart{background:linear-gradient(135deg,rgba(139,47,201,0.2),rgba(180,78,240,0.1));border:1px solid rgba(139,47,201,0.5);border-radius:11px;padding:18px 22px;margin-bottom:12px;text-align:center}
+  .hedef-label{font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:var(--purple2);letter-spacing:0.32em;text-transform:uppercase;margin-bottom:8px}
+  .hedef-metn{font-size:1.5rem;font-weight:700}
+  .transmissiya{background:var(--bg3);border:1px solid rgba(57,255,20,0.3);border-radius:11px;padding:16px 20px;margin-bottom:12px;text-align:center}
+  .trans-label{font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:var(--green);letter-spacing:0.32em;text-transform:uppercase;margin-bottom:10px;opacity:0.7}
+  .herf-wrapper{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px}
+  .herf-sira{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;flex:1}
+  .herf-b{display:flex;align-items:center;justify-content:center;width:42px;height:42px;background:var(--bg);border:1px solid rgba(57,255,20,0.5);border-radius:6px;font-family:'Share Tech Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--green);text-shadow:0 0 10px rgba(57,255,20,0.5);animation:hg 0.35s ease both}
+  @keyframes hg{from{opacity:0;transform:translateY(-7px) scale(0.8)}to{opacity:1;transform:none}}
+  .plus-btn{width:38px;height:38px;background:rgba(57,255,20,0.1);border:2px solid rgba(57,255,20,0.4);border-radius:7px;font-size:1.3rem;color:var(--green);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;flex-shrink:0;font-weight:700}
+  .plus-btn:hover{background:rgba(57,255,20,0.22);transform:scale(1.1)}
+  .elave-sira{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin-top:7px;padding-top:7px;border-top:1px solid rgba(57,255,20,0.1)}
+  .elave-h{display:flex;align-items:center;justify-content:center;width:34px;height:34px;background:rgba(0,229,255,0.05);border:1px solid rgba(0,229,255,0.3);border-radius:6px;font-family:'Share Tech Mono',monospace;font-size:1rem;font-weight:700;color:var(--cyan);animation:hg 0.25s ease both}
+  .trans-note{font-size:0.72rem;color:var(--muted);font-style:italic;margin-top:6px}
+  .skip-wrap{margin-bottom:12px}
+  .secim-baslik{font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--cyan);letter-spacing:0.25em;text-transform:uppercase;text-align:center;margin-bottom:10px}
+  .haqq-goster{text-align:center;margin-bottom:10px;font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--muted)}
+  .haqq-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 3px}
+  .haqq-dot.dolu{background:var(--green);box-shadow:0 0 6px var(--green)}.haqq-dot.bos{background:var(--muted)}
+  .secim-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+  .secim-btn{background:var(--bg3);border:1px solid rgba(139,47,201,0.3);border-radius:9px;padding:11px 14px;cursor:pointer;color:var(--white);font-family:'Space Grotesk',sans-serif;font-size:0.85rem;font-weight:500;text-align:left;transition:all 0.18s;line-height:1.3}
+  .secim-btn:hover{border-color:var(--cyan);background:rgba(0,229,255,0.06);transform:translateY(-1px)}
+  .secim-btn.yanlis-sec{border-color:var(--red);background:rgba(255,51,85,0.12);animation:shake 0.35s ease;pointer-events:none}
+  .secim-btn.dogru-sec{border-color:var(--green);background:rgba(57,255,20,0.12);pointer-events:none}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  .bildiris-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;max-height:160px;overflow-y:auto}
+  .bil{background:var(--bg3);border-radius:6px;padding:9px 13px;font-size:0.82rem;border-left:3px solid;animation:bgin 0.25s ease}
+  @keyframes bgin{from{opacity:0;transform:translateX(-7px)}to{opacity:1;transform:none}}
+  .bil.ok{border-color:var(--green);color:var(--green)}.bil.no{border-color:var(--red);color:rgba(255,51,85,0.8)}.bil.info{border-color:var(--muted);color:var(--muted)}
+  .alien-wait{background:rgba(57,255,20,0.05);border:1px solid rgba(57,255,20,0.2);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:0.82rem;color:rgba(57,255,20,0.7);font-family:'Share Tech Mono',monospace;text-align:center}
+  .kat-badge{display:inline-block;background:rgba(139,47,201,0.2);border:1px solid rgba(139,47,201,0.4);border-radius:11px;padding:3px 9px;font-size:0.68rem;font-family:'Share Tech Mono',monospace;color:var(--purple2);margin-bottom:10px}
+  .bitti-panel{text-align:center;padding:36px 24px}
+  .qalib-emoji{font-size:3.5rem;margin-bottom:14px;animation:qpop 0.55s ease}
+  @keyframes qpop{0%{transform:scale(0) rotate(-15deg)}60%{transform:scale(1.15) rotate(4deg)}100%{transform:scale(1) rotate(0)}}
+  .qalib-baslig{font-size:1.7rem;font-weight:700;margin-bottom:7px;background:linear-gradient(135deg,var(--gold),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .son-xallar{display:flex;justify-content:center;gap:22px;margin:18px 0 26px;flex-wrap:wrap}
+  .sxb{text-align:center}.sxb-adi{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:3px}.sxb-n{font-size:2.3rem;font-weight:700;line-height:1}
+  .conn{position:fixed;top:11px;right:15px;display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.13em;z-index:100}
+  .conn-dot{width:7px;height:7px;border-radius:50%}
+  .conn-dot.ok{background:var(--green);box-shadow:0 0 6px var(--green)}.conn-dot.no{background:var(--red)}.conn-dot.wait{background:var(--gold);animation:pulse 1s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+  /* Teamsiz mode: single list */
+  .oyuncular-tek{background:var(--bg3);border-radius:8px;padding:12px;margin-bottom:14px}
+  .oyuncu-tek-baslik{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase;margin-bottom:9px;padding-bottom:6px;border-bottom:1px solid rgba(139,47,201,0.2);color:var(--purple2)}
+  /* Sahib-only controls indicator */
+  .sahib-only{background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.2);border-radius:6px;padding:5px 9px;font-size:0.7rem;color:var(--gold);font-family:'Share Tech Mono',monospace;margin-bottom:8px;text-align:center}
+  @media(max-width:480px){.panel{padding:16px}.oyuncular-grid{grid-template-columns:1fr}.secim-grid{grid-template-columns:1fr}.herf-b{width:36px;height:36px;font-size:1.05rem}}
+</style>
+</head>
+<body>
+<div class="conn"><div class="conn-dot wait" id="cDot"></div><span id="cTxt">BAĞLANIR</span></div>
+<div class="app">
+<header>
+  <div class="logo">🛸 NƏ DANIŞIRSINIZ SİZ?!</div>
+  <div class="logo-sub">Alien Çarades · Azərbaycan Versiyası</div>
+</header>
+
+<!-- Giriş -->
+<div class="panel" id="girisEkrani">
+  <div class="panel-title">// İstasiya girişi</div>
+  <input type="text" id="adInput" placeholder="Oyunçu adınız" maxlength="20">
+  <button class="btn btn-primary" onclick="otaqYarat()">🛸 Yeni Otaq Aç</button>
+  <div class="divider">YA DA</div>
+  <input type="text" id="kodInput" placeholder="Otaq kodu (6 hərf)" maxlength="6" style="text-transform:uppercase">
+  <button class="btn btn-secondary" onclick="otaqaQosul()">📡 Otağa Qoşul</button>
+  <div class="divider">AÇIq OTAQLAR</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+    <span style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--muted)">Gözləmə otaqları</span>
+    <button class="refresh-btn" onclick="otaqlariYukle()">↻ Yenilə</button>
+  </div>
+  <div class="otaqlar-list" id="onlineOtaqlar"><div style="text-align:center;color:var(--muted);font-size:0.82rem;padding:10px">Yüklənir...</div></div>
+</div>
+
+<!-- Gözləmə -->
+<div class="panel" id="gozlemeEkrani" style="display:none">
+  <div class="panel-title">// Gözləmə otağı</div>
+  <div class="otaq-kodu-goster">
+    <div class="otaq-kodu-label">Otaq Kodu</div>
+    <div class="otaq-kodu-val" id="gosterKod">———</div>
+  </div>
+
+  <!-- Oyuncu listəsi: teamli mod -->
+  <div id="teamliOyuncular" style="display:none">
+    <div class="oyuncular-grid">
+      <div class="komanda-blok"><div class="komanda-baslik a">⚡ A Komandası</div><div id="listA"></div></div>
+      <div class="komanda-blok"><div class="komanda-baslik b">🔥 B Komandası</div><div id="listB"></div></div>
+    </div>
+  </div>
+  <!-- Oyuncu listəsi: teamsiz mod -->
+  <div id="teamsizOyuncular" style="display:none">
+    <div class="oyuncular-tek">
+      <div class="oyuncu-tek-baslik">👥 Oyunçular</div>
+      <div id="listTek"></div>
+    </div>
+  </div>
+
+  <!-- Sahib ayarlar -->
+  <div id="sahibAyarlar" style="display:none">
+    <div class="ayar-bolme">
+      <div class="ayar-baslig">// Oyun Modu</div>
+      <div class="mod-grid">
+        <div class="mod-btn teamsiz sel" onclick="modSec('teamsiz')">
+          <div class="mod-emoji">🎯</div>
+          <div class="mod-label">1 Guesser</div>
+          <div class="mod-info">2-3 nəfər · ümumi xal</div>
+        </div>
+        <div class="mod-btn teamli" onclick="modSec('teamli')">
+          <div class="mod-emoji">⚔️</div>
+          <div class="mod-label">Team Oyunu</div>
+          <div class="mod-info">4+ nəfər · A vs B</div>
+        </div>
+      </div>
+    </div>
+    <div class="ayar-bolme">
+      <div class="ayar-baslig">// Çətinlik</div>
+      <div class="diff-grid">
+        <div class="diff-btn easy" onclick="cetinlikSec('easy')"><div class="diff-emoji">🟢</div><div class="diff-label">Asan</div><div class="diff-info">120s · 7 hərf</div></div>
+        <div class="diff-btn medium sel" onclick="cetinlikSec('medium')"><div class="diff-emoji">🟡</div><div class="diff-label">Orta</div><div class="diff-info">90s · 6 hərf</div></div>
+        <div class="diff-btn hard" onclick="cetinlikSec('hard')"><div class="diff-emoji">🔴</div><div class="diff-label">Çətin</div><div class="diff-info">60s · 5 hərf</div></div>
+        <div class="diff-btn nightmare" onclick="cetinlikSec('nightmare')"><div class="diff-emoji">💀</div><div class="diff-label">Nightmare</div><div class="diff-info">45s · 4 hərf</div></div>
+      </div>
+      <div class="ayar-row"><label>Kateqoriya:</label><select id="katSel" onchange="katDeyish()"><option value="">🌍 Hamısı</option></select></div>
+      <div class="ayar-row"><label>Tur sayı:</label><input type="number" id="turSayi" value="10" min="5" max="30" onchange="turDeyish()"></div>
+    </div>
+  </div>
+  <!-- Qeyri-sahib: görmə rejimi ayarlar -->
+  <div id="izciAyarlar" style="display:none">
+    <div class="ayar-bolme" style="opacity:0.6">
+      <div class="ayar-baslig" style="color:var(--muted)">// Ayarlar (Yalnız otaq sahibi dəyişə bilər)</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--muted);padding:6px 0" id="izciAyarInfo">—</div>
+    </div>
+  </div>
+
+  <div class="gozleme-mesaj" id="gozMesaj">Hamı hazır olsun<span class="ldot">.</span><span class="ldot">.</span><span class="ldot">.</span></div>
+  <button class="btn btn-green" id="hazirBtn" onclick="hazirOl()">✅ Hazıram!</button>
+  <button class="btn btn-danger btn-sm" onclick="location.reload()" style="margin-top:4px">Çıx</button>
+</div>
+
+<!-- Oyun -->
+<div class="oyun-ekrani" id="oyunEkrani" style="display:none">
+  <!-- Xal paneli: teamli mod -->
+  <div class="xal-paneli" id="xalPaneliTeamli">
+    <div class="xal-k a" id="xalA"><div class="xal-adi a">A Komandası</div><div class="xal-n a" id="xalAn">0</div></div>
+    <div class="tur-c"><div class="tur-label">TUR</div><div class="tur-val" id="turG">1/10</div></div>
+    <div class="xal-k b" id="xalB"><div class="xal-adi b">B Komandası</div><div class="xal-n b" id="xalBn">0</div></div>
+  </div>
+  <!-- Xal paneli: teamsiz mod -->
+  <div class="xal-paneli" id="xalPaneliTeamsiz" style="display:none">
+    <div style="flex:1"></div>
+    <div class="tur-c"><div class="tur-label">TUR</div><div class="tur-val" id="turG2">1/10</div></div>
+    <div class="xal-k umumi aktif" style="flex:1"><div class="xal-adi umumi">Ümumi Xal</div><div class="xal-n umumi" id="xalUmumi">0</div></div>
+  </div>
+
+  <div style="text-align:center"><div class="kat-badge" id="katBadge" style="display:none"></div></div>
+  <div class="vaxt-c">
+    <svg viewBox="0 0 80 80"><circle class="bg-c" cx="40" cy="40" r="35"/><circle class="prog-c" id="vaxtProg" cx="40" cy="40" r="35"/></svg>
+    <div class="vaxt-t" id="vaxtT">60</div>
+  </div>
+  <div style="text-align:center"><div class="rol-tag" id="rolTag"><span id="rolIkon">👽</span><span id="rolT">ALİEN</span></div></div>
+
+  <!-- Alien bölməsi -->
+  <div id="alienBlok" style="display:none">
+    <div class="hedef-kart">
+      <div class="hedef-label">🎯 Hədəf Anlayış</div>
+      <div class="hedef-metn" id="hedefT">—</div>
+    </div>
+    <div class="transmissiya">
+      <div class="trans-label">📡 Transmissiya Protokolu</div>
+      <div class="herf-wrapper">
+        <div class="herf-sira" id="herfSira"></div>
+        <div class="plus-btn" onclick="plusEkle()" title="9 yeni hərf əlavə et">+</div>
+      </div>
+      <div class="elave-sira" id="elaveSira" style="display:none"></div>
+      <div class="trans-note">Yalnız bu hərflərlə başlayan sözlər · + ilə 9 yeni hərf</div>
+    </div>
+    <div class="skip-wrap">
+      <button class="btn btn-skip" onclick="skipEt()">⏭ Skip (sözdən keç, xalsız)</button>
+    </div>
+  </div>
+
+  <!-- Guesser bölməsi -->
+  <div id="guesserBlok" style="display:none">
+    <div class="alien-wait">👽 Alien izah edir — aşağıdan düzgün cavabı seçin<span class="ldot">.</span><span class="ldot">.</span><span class="ldot">.</span></div>
+    <div class="secim-baslik">// Cavabı seçin</div>
+    <div class="haqq-goster" id="haqqGoster"></div>
+    <div class="secim-grid" id="secimGrid"></div>
+  </div>
+
+  <!-- İzləyici -->
+  <div class="alien-wait" id="izciBlok" style="display:none">👁 İzləyirsiniz — <span id="izciKomanda"></span></div>
+
+  <div class="bildiris-list" id="bilList"></div>
+</div>
+
+<!-- Bitti -->
+<div class="panel bitti-panel" id="bittiEkrani" style="display:none">
+  <div class="qalib-emoji" id="qalibE">🏆</div>
+  <div class="qalib-baslig" id="qalibB">Oyun bitdi!</div>
+  <div class="son-xallar" id="sonXallar"></div>
+  <button class="btn btn-primary" onclick="yenidenOyna()">🔄 Yenidən Oyna</button>
+  <button class="btn btn-secondary" onclick="location.reload()" style="margin-top:4px">Ana Səhifə</button>
+</div>
+</div>
+
+<script>
+const AZ=['A','B','C','Ç','D','E','Ə','F','G','H','X','İ','J','K','Q','L','M','N','O','Ö','P','R','S','Ş','T','U','Ü','V','Y','Z'];
+let ws=null, oyuncuId=null, mevcudKomanda=null, sahibId=null;
+let elaveH=[], mevcudHerfler=[];
+let mevcudOyunModu='teamsiz'; // local track
+
+function wsQ(){
+  const proto=location.protocol==='https:'?'wss:':'ws:';
+  ws=new WebSocket(`${proto}//${location.host}`);
+  ws.onopen=()=>{setConn('ok','BAĞLI');otaqlariYukle();}
+  ws.onclose=()=>{setConn('no','KƏSİLDİ');setTimeout(wsQ,3000);}
+  ws.onerror=()=>setConn('no','XƏTA');
+  ws.onmessage=(e)=>isle(JSON.parse(e.data));
+}
+function setConn(s,t){document.getElementById('cDot').className='conn-dot '+s;document.getElementById('cTxt').textContent=t;}
+function send(d){if(ws&&ws.readyState===1)ws.send(JSON.stringify(d));}
+
+async function otaqlariYukle(){
+  const c=document.getElementById('onlineOtaqlar');
+  try{
+    const r=await fetch('/api/otaqlar'),list=await r.json();
+    if(!list.length){c.innerHTML='<div style="text-align:center;color:var(--muted);font-size:0.82rem;padding:10px">Açıq otaq yoxdur</div>';return;}
+    const em={easy:'🟢',medium:'🟡',hard:'🔴',nightmare:'💀'};
+    const modLabel={teamsiz:'1 Guesser',teamli:'Team Oyunu'};
+    c.innerHTML='';
+    list.forEach(o=>{
+      const d=document.createElement('div');d.className='otaq-row';
+      d.innerHTML=`<span class="otaq-row-kod">${o.id}</span><div class="otaq-row-meta">${em[o.cetinlik]||'🟡'} ${o.cetinlik}<br>${o.oyuncuSayi} oyunçu · ${modLabel[o.oyunModu]||''}${o.kateqoriya?'<br>'+o.kateqoriya:''}</div>`;
+      d.onclick=()=>document.getElementById('kodInput').value=o.id;
+      c.appendChild(d);
+    });
+  }catch{c.innerHTML='<div style="text-align:center;color:var(--muted);font-size:0.82rem;padding:10px">Yüklənmədi</div>';}
+}
+
+function isle(d){
+  switch(d.tip){
+    case 'otaq_yaradildi':
+      oyuncuId=d.oyuncuId; sahibId=d.sahibId;
+      document.getElementById('gosterKod').textContent=d.otaqId;
+      show('gozlemeEkrani'); break;
+    case 'qosuldu':
+      oyuncuId=d.oyuncuId; mevcudKomanda=d.komanda; sahibId=d.sahibId;
+      document.getElementById('gosterKod').textContent=d.otaqId;
+      show('gozlemeEkrani'); break;
+    case 'otaq_durumu': durumuGuncelle(d); break;
+    case 'secim_netice': secimNetice(d); break;
+    case 'skip_edildi': bilEkle(`⏭ Skip: "${d.kart}"`, 'info'); break;
+    case 'oyun_bitti': oyunBitti(d); break;
+    case 'xeta': alert('❌ '+d.mesaj); break;
+  }
+}
+
+function show(id){
+  ['girisEkrani','gozlemeEkrani','oyunEkrani','bittiEkrani'].forEach(i=>document.getElementById(i).style.display=i===id?'block':'none');
+}
+
+function durumuGuncelle(d){
+  const ben=d.oyuncular.find(o=>o.id===oyuncuId);
+  if(ben) mevcudKomanda=ben.komanda;
+  if(d.sahibId) sahibId=d.sahibId;
+  mevcudOyunModu=d.oyunModu||'teamsiz';
+  const benSahib=(oyuncuId===sahibId);
+
+  if(d.kateqoriyalar){
+    const s=document.getElementById('katSel');
+    if(s.children.length<=1) d.kateqoriyalar.forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k;s.appendChild(o);});
+    if(d.kateqoriya) s.value=d.kateqoriya;
+  }
+  if(d.cetinlik){document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('sel'));document.querySelector('.diff-btn.'+d.cetinlik)?.classList.add('sel');}
+
+  if(d.oyunVeziyyeti==='gozleme'){
+    show('gozlemeEkrani');
+
+    // Sahib ayarları göstər/gizlə
+    document.getElementById('sahibAyarlar').style.display=benSahib?'block':'none';
+    document.getElementById('izciAyarlar').style.display=benSahib?'none':'block';
+    if(!benSahib){
+      const modLabel={teamsiz:'🎯 1 Guesser Modu',teamli:'⚔️ Team Oyunu'};
+      const em={easy:'🟢 Asan',medium:'🟡 Orta',hard:'🔴 Çətin',nightmare:'💀 Nightmare'};
+      document.getElementById('izciAyarInfo').textContent=`${modLabel[d.oyunModu]||''} · ${em[d.cetinlik]||''} · ${d.maksimumTur} tur`;
+    }
+
+    // Mod seçim düymələri
+    if(benSahib){
+      document.querySelectorAll('.mod-btn').forEach(b=>b.classList.remove('sel'));
+      document.querySelector('.mod-btn.'+mevcudOyunModu)?.classList.add('sel');
+    }
+
+    // Oyuncu listəsi - moda görə göstər
+    if(mevcudOyunModu==='teamli'){
+      document.getElementById('teamliOyuncular').style.display='block';
+      document.getElementById('teamsizOyuncular').style.display='none';
+      oyuncuListesiTeamli(d.oyuncular, benSahib);
+    } else {
+      document.getElementById('teamliOyuncular').style.display='none';
+      document.getElementById('teamsizOyuncular').style.display='block';
+      oyuncuListesiTek(d.oyuncular, benSahib);
+    }
+
+    hazirGuncelle(d.oyuncular);
+  } else if(d.oyunVeziyyeti==='oyun'){
+    show('oyunEkrani'); oyunGuncelle(d);
+  }
+}
+
+function oyuncuListesiTeamli(oyuncular, benSahib){
+  ['A','B'].forEach(k=>{
+    const el=document.getElementById('list'+k);el.innerHTML='';
+    const f=oyuncular.filter(o=>o.komanda===k);
+    if(!f.length){el.innerHTML='<div style="color:var(--muted);font-size:0.78rem;padding:3px 0">Gözlənilir...</div>';return;}
+    f.forEach(o=>{
+      const d=document.createElement('div');d.className='oyuncu-row';
+      const yeniK=k==='A'?'B':'A';
+      const kocBtn=benSahib&&o.id!==oyuncuId?`<button class="koc-btn" onclick="oyuncuKoc('${o.id}','${yeniK}')">→${yeniK}</button>`:'';
+      const senB=o.id===oyuncuId?'<span class="sen-badge">SİZ</span>':'';
+      const sahibB=o.id===sahibId?'<span class="sahib-badge">SAHİB</span>':'';
+      d.innerHTML=`<div class="dot ${o.hazir?'hazir':'bekle'}"></div><span style="flex:1">${o.ad}</span>${senB}${sahibB}${kocBtn}`;
+      el.appendChild(d);
+    });
+  });
+}
+
+function oyuncuListesiTek(oyuncular, benSahib){
+  const el=document.getElementById('listTek');el.innerHTML='';
+  if(!oyuncular.length){el.innerHTML='<div style="color:var(--muted);font-size:0.78rem;padding:3px 0">Gözlənilir...</div>';return;}
+  oyuncular.forEach(o=>{
+    const d=document.createElement('div');d.className='oyuncu-row';
+    const senB=o.id===oyuncuId?'<span class="sen-badge">SİZ</span>':'';
+    const sahibB=o.id===sahibId?'<span class="sahib-badge">SAHİB</span>':'';
+    d.innerHTML=`<div class="dot ${o.hazir?'hazir':'bekle'}"></div><span style="flex:1">${o.ad}</span>${senB}${sahibB}`;
+    el.appendChild(d);
+  });
+}
+
+function hazirGuncelle(oyuncular){
+  const btn=document.getElementById('hazirBtn');
+  const ben=oyuncular.find(o=>o.id===oyuncuId);
+  if(ben?.hazir){btn.disabled=true;btn.textContent='⏳ Gözlənilir...';}
+  const msg=document.getElementById('gozMesaj');
+  if(oyuncular.length<2) msg.innerHTML='Ən az 2 oyunçu lazımdır<span class="ldot">.</span><span class="ldot">.</span><span class="ldot">.</span>';
+  else if(oyuncular.every(o=>o.hazir)) msg.textContent='🛸 Oyun başlayır!';
+  else msg.textContent=`${oyuncular.filter(o=>o.hazir).length}/${oyuncular.length} hazır`;
+}
+
+function oyunGuncelle(d){
+  const modu=d.oyunModu||'teamsiz';
+  mevcudOyunModu=modu;
+
+  // Xal panelləri
+  if(modu==='teamli'){
+    document.getElementById('xalPaneliTeamli').style.display='';
+    document.getElementById('xalPaneliTeamsiz').style.display='none';
+    document.getElementById('xalAn').textContent=d.xallar.A;
+    document.getElementById('xalBn').textContent=d.xallar.B;
+    document.getElementById('xalA').classList.toggle('aktif',d.mevcudKomanda==='A');
+    document.getElementById('xalB').classList.toggle('aktif',d.mevcudKomanda==='B');
+    document.getElementById('turG').textContent=`${d.turSayaci}/${d.maksimumTur}`;
+  } else {
+    document.getElementById('xalPaneliTeamli').style.display='none';
+    document.getElementById('xalPaneliTeamsiz').style.display='';
+    document.getElementById('xalUmumi').textContent=d.xallar.umumiXal||0;
+    document.getElementById('turG2').textContent=`${d.turSayaci}/${d.maksimumTur}`;
+  }
+
+  const maxV={easy:120,medium:90,hard:60,nightmare:45}[d.cetinlik||'medium']||60;
+  const v=d.vaxt??maxV;
+  document.getElementById('vaxtT').textContent=v;
+  const p=document.getElementById('vaxtProg');
+  p.style.strokeDashoffset=(2*Math.PI*35)*(1-v/maxV);
+  p.style.stroke=v>maxV*0.4?'var(--green)':v>maxV*0.2?'var(--gold)':'var(--red)';
+  const kb=document.getElementById('katBadge');
+  if(d.kateqoriya){kb.style.display='inline-block';kb.textContent='📂 '+d.kateqoriya;}else kb.style.display='none';
+
+  const ben=d.oyuncular?.find(o=>o.id===oyuncuId);
+  const benAlien=ben?.alien===true;
+  // Hər iki modda: alien deyilsənsə və secimler sənə göndərilibsə = guessersən
+  // teamsiz: alien olmayan 1 nəfər guesser
+  // teamli: aktiv komandada alien olmayan = guesser
+  const benGuesser = !benAlien && !!d.secimler;
+
+  // Rol tag
+  const rt=document.getElementById('rolTag'),ri=document.getElementById('rolIkon'),rm=document.getElementById('rolT');
+  if(benAlien){
+    rt.className='rol-tag alien';ri.textContent='👽';
+    rm.textContent=modu==='teamli'?`ALİEN — ${ben.komanda} Komandası`:'ALİEN — İzah et';
+  } else if(benGuesser){
+    rt.className='rol-tag insan';ri.textContent='🧑';
+    rm.textContent='GUESSER — Cavabı seçin';
+  } else {
+    rt.className='rol-tag izci';ri.textContent='👁';
+    rm.textContent='İZLƏYİCİ';
+  }
+
+  document.getElementById('alienBlok').style.display=benAlien?'block':'none';
+  document.getElementById('guesserBlok').style.display=benGuesser?'block':'none';
+  document.getElementById('izciBlok').style.display=(!benAlien&&!benGuesser)?'block':'none';
+  if(!benAlien&&!benGuesser){
+    document.getElementById('izciKomanda').textContent=modu==='teamli'?`${d.mevcudKomanda} Komandası oynayır`:'Gözləyirsiniz';
+  }
+
+  if(benAlien&&d.mevcudKart) document.getElementById('hedefT').textContent=d.mevcudKart;
+
+  if(benAlien&&d.mevcudHerfler?.length){
+    // Her alien oz uniq herflerini alir, deye daim yenile
+    const eyni=mevcudHerfler.length===d.mevcudHerfler.length&&mevcudHerfler.every((h,i)=>h===d.mevcudHerfler[i]);
+    if(!eyni){mevcudHerfler=[...d.mevcudHerfler];elaveH=[];renderHerf();}
+  }
+
+  if(benGuesser&&d.secimler){
+    renderSecimler(d.secimler,d.guessHaqqi??3);
+  }
+}
+
+function renderHerf(){
+  const s=document.getElementById('herfSira');s.innerHTML='';
+  mevcudHerfler.forEach((h,i)=>{
+    const sp=document.createElement('span');sp.className='herf-b';sp.textContent=h;sp.style.animationDelay=(i*0.05)+'s';s.appendChild(sp);
+  });
+  renderElave();
+}
+function plusEkle(){
+  const var_=new Set([...mevcudHerfler,...elaveH]);
+  const yeni=[...AZ].sort(()=>Math.random()-0.5).filter(h=>!var_.has(h)).slice(0,9);
+  elaveH.push(...yeni);renderElave();
+}
+function renderElave(){
+  const s=document.getElementById('elaveSira');
+  if(!elaveH.length){s.style.display='none';return;}
+  s.style.display='flex';s.innerHTML='';
+  elaveH.forEach((h,i)=>{const sp=document.createElement('span');sp.className='elave-h';sp.textContent=h;sp.style.animationDelay=(i*0.03)+'s';s.appendChild(sp);});
+}
+
+function renderSecimler(secimler,haqq){
+  const hg=document.getElementById('haqqGoster');
+  hg.innerHTML='Guess hüququ: '+[...Array(3)].map((_,i)=>`<span class="haqq-dot ${i<haqq?'dolu':'bos'}"></span>`).join('');
+  const grid=document.getElementById('secimGrid');grid.innerHTML='';
+  secimler.forEach(s=>{
+    const btn=document.createElement('button');btn.className='secim-btn';btn.textContent=s;
+    btn.onclick=()=>secimSec(s,btn);
+    grid.appendChild(btn);
+  });
+}
+
+function secimSec(s,btn){
+  document.querySelectorAll('.secim-btn').forEach(b=>b.disabled=true);
+  send({tip:'secim',secim:s});
+  btn.classList.add('loading');
+}
+
+function secimNetice(d){
+  if(d.dogru){
+    document.querySelectorAll('.secim-btn').forEach(b=>{if(b.textContent===d.secim)b.classList.add('dogru-sec');});
+    const xalMsg=d.oyunModu==='teamsiz'?` · Ümumi: ${d.umumiXal}`:'';
+    bilEkle(`✅ Düzgün! "${d.secim}" +1 xal 🎉${xalMsg}`,'ok');
+  } else {
+    document.querySelectorAll('.secim-btn').forEach(b=>{
+      if(b.textContent===d.secim) b.classList.add('yanlis-sec');
+      b.disabled=false;
+    });
+    if(d.haqq===0) bilEkle(`❌ Haqq bitdi! Söz: "${d.mevcudKart||'?'}" — növbəti tur`,'no');
+    else bilEkle(`❌ Yanlış! ${d.haqq} hüquq qaldı`,'no');
+    if(d.haqq!==undefined&&d.haqq>0){
+      const hg=document.getElementById('haqqGoster');
+      hg.innerHTML='Guess hüququ: '+[...Array(3)].map((_,i)=>`<span class="haqq-dot ${i<d.haqq?'dolu':'bos'}"></span>`).join('');
+    }
+  }
+}
+
+function bilEkle(t,tip){
+  const l=document.getElementById('bilList');
+  const d=document.createElement('div');d.className='bil '+tip;d.textContent=t;
+  l.appendChild(d);l.scrollTop=l.scrollHeight;
+  while(l.children.length>25)l.removeChild(l.firstChild);
+}
+
+function oyunBitti(d){
+  show('bittiEkrani');
+  const sx=document.getElementById('sonXallar');
+  if(d.oyunModu==='teamsiz'){
+    document.getElementById('qalibE').textContent='🎉';
+    document.getElementById('qalibB').textContent=`Ümumi ${d.xallar.umumiXal||0} xal qazandınız!`;
+    sx.innerHTML=`<div class="sxb"><div class="sxb-adi" style="color:var(--gold)">Ümumi Xal</div><div class="sxb-n" style="color:var(--gold)">${d.xallar.umumiXal||0}</div></div>`;
+  } else {
+    const qalib=d.qalib===mevcudKomanda;
+    document.getElementById('qalibE').textContent=d.qalib==='berabere'?'🤝':qalib?'🏆':'💀';
+    document.getElementById('qalibB').textContent=d.qalib==='berabere'?'Bərabərlik!':d.qalib+' Komandası Qazandı!';
+    sx.innerHTML=`<div class="sxb"><div class="sxb-adi" style="color:var(--ta)">A Komandası</div><div class="sxb-n" style="color:var(--ta)">${d.xallar.A}</div></div><div class="sxb"><div class="sxb-adi" style="color:var(--tb)">B Komandası</div><div class="sxb-n" style="color:var(--tb)">${d.xallar.B}</div></div>`;
+  }
+}
+
+function otaqYarat(){const ad=document.getElementById('adInput').value.trim();if(!ad){alert('Ad yazın');return;}send({tip:'otaq_yarat',ad});}
+function otaqaQosul(){const ad=document.getElementById('adInput').value.trim(),kod=document.getElementById('kodInput').value.trim().toUpperCase();if(!ad){alert('Ad yazın');return;}if(kod.length!==6){alert('6 hərf kod');return;}send({tip:'otaqa_qosul',ad,otaqId:kod});}
+function hazirOl(){send({tip:'hazir'});document.getElementById('hazirBtn').disabled=true;document.getElementById('hazirBtn').textContent='⏳ Gözlənilir...';}
+function cetinlikSec(c){if(oyuncuId!==sahibId)return;document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('sel'));document.querySelector('.diff-btn.'+c)?.classList.add('sel');send({tip:'ayarlar_deyish',cetinlik:c});}
+function katDeyish(){if(oyuncuId!==sahibId)return;send({tip:'ayarlar_deyish',kateqoriya:document.getElementById('katSel').value});}
+function turDeyish(){if(oyuncuId!==sahibId)return;send({tip:'ayarlar_deyish',maksimumTur:parseInt(document.getElementById('turSayi').value)||10});}
+function modSec(m){if(oyuncuId!==sahibId)return;document.querySelectorAll('.mod-btn').forEach(b=>b.classList.remove('sel'));document.querySelector('.mod-btn.'+m)?.classList.add('sel');send({tip:'ayarlar_deyish',oyunModu:m});}
+function skipEt(){send({tip:'skip'});}
+function oyuncuKoc(hdfId,yeniK){if(oyuncuId!==sahibId)return;send({tip:'oyuncu_koc',hdfOyuncuId:hdfId,yeniKomanda:yeniK});}
+function yenidenOyna(){send({tip:'yeniden_oyna'});document.getElementById('bilList').innerHTML='';const hb=document.getElementById('hazirBtn');hb.disabled=false;hb.textContent='✅ Hazıram!';elaveH=[];mevcudHerfler=[];}
+
+wsQ();
+</script>
+</body>
+</html>
